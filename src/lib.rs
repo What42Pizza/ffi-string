@@ -55,6 +55,24 @@ impl std::fmt::Display for FFIStr<'_> {
 	}
 }
 
+impl<'a> From<&'a str> for FFIStr<'a> {
+	fn from(value: &'a str) -> Self {
+		Self::new(value)
+	}
+}
+
+impl<'a> AsRef<str> for FFIStr<'a> {
+	fn as_ref(&self) -> &str {
+		self.as_str()
+	}
+}
+
+impl Into<String> for FFIStr<'_> {
+	fn into(self) -> String {
+		self.to_string()
+	}
+}
+
 
 
 /// FFI version of String
@@ -66,7 +84,7 @@ pub struct FFIString {
 }
 
 impl FFIString {
-	/// Creates a new FFIString from a String, copying only pointers
+	/// Creates a new FFIString from a String, copying only pointers (if you pass String) or all underlying data (for anything else)
 	pub fn new(from: impl Into<String>) -> Self {
 		let mut from = from.into();
 		let output = Self {
@@ -113,5 +131,23 @@ impl Deref for FFIString {
 impl std::fmt::Display for FFIString {
 	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
 		write!(f, "{}", self.as_str())
+	}
+}
+
+impl From<String> for FFIString {
+	fn from(value: String) -> Self {
+		Self::new(value)
+	}
+}
+
+impl AsRef<str> for FFIString {
+	fn as_ref(&self) -> &str {
+		self.as_str()
+	}
+}
+
+impl Into<String> for FFIString {
+	fn into(self) -> String {
+		self.to_string()
 	}
 }

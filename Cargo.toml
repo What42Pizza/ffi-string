@@ -1,6 +1,9 @@
 [package]
 name = "ffi-string"
-version = "0.1.0"
-edition = "2024"
-
-[dependencies]
+version = "1.0.0"
+edition = "2021"
+license = "MIT"
+description = "A small crate for moving strings across `extern \"C\"`"
+repository = "https://github.com/What42Pizza/ffi-string"
+readme = "readme.md"
+keywords = ["ffi"]
