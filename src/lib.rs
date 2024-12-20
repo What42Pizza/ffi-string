@@ -34,7 +34,7 @@ impl<'a> FFIStr<'a> {
 	}
 	/// Creates a string slice, copying only pointers
 	/// 
-	/// The function `to_string()` (implementation of fmt::Display) creates a new String, copying the underlying data
+	/// Also, the function `to_string()` (implementation of fmt::Display) creates a new String, copying the underlying data
 	pub fn as_str(&self) -> &'a str {
 		unsafe {
 			core::str::from_raw_parts(self.ptr, self.len as usize)
@@ -97,7 +97,7 @@ impl FFIString {
 	}
 	/// Creates a new String, copying only pointers
 	/// 
-	/// The function `to_string()` (implementation of fmt::Display) creates a new String, copying the underlying data
+	/// Also, the function `to_string()` (implementation of fmt::Display) creates a new String, copying the underlying data
 	pub fn into_string(self) -> String {
 		unsafe {
 			let output = String::from_raw_parts(self.ptr, self.len as usize, self.cap as usize);
