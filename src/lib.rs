@@ -11,11 +11,12 @@
 
 
 
-use std::ops::Deref;
+use std::{fmt::{self, Display, Formatter}, ops::Deref};
 
 
 
 /// FFI version of &str
+#[derive(Copy, Clone)]
 #[repr(C)]
 pub struct FFIStr<'a> {
 	ptr: &'a u8,
@@ -49,8 +50,14 @@ impl Deref for FFIStr<'_> {
 	}
 }
 
-impl std::fmt::Display for FFIStr<'_> {
-	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl fmt::Debug for FFIStr<'_> {
+	fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+		write!(f, "\"{}\"", self.as_str())
+	}
+}
+
+impl Display for FFIStr<'_> {
+	fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
 		write!(f, "{}", self.as_str())
 	}
 }
@@ -128,8 +135,14 @@ impl Deref for FFIString {
 	}
 }
 
-impl std::fmt::Display for FFIString {
-	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl fmt::Debug for FFIString {
+	fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+		write!(f, "\"{}\"", self.as_str())
+	}
+}
+
+impl Display for FFIString {
+	fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
 		write!(f, "{}", self.as_str())
 	}
 }
@@ -149,5 +162,11 @@ impl AsRef<str> for FFIString {
 impl Into<String> for FFIString {
 	fn into(self) -> String {
 		self.to_string()
+	}
+}
+
+impl Clone for FFIString {
+	fn clone(&self) -> Self {
+		Self::new(self.to_string())
 	}
 }
