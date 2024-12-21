@@ -80,6 +80,23 @@ impl Into<String> for FFIStr<'_> {
 	}
 }
 
+/// Adds `to_ffi_str()` and `to_ffi_string()` to &str
+pub trait StrToFFI {
+	/// Convenience function for converting from &'a str to FFIStr<'a>
+	fn to_ffi_str<'a>(&'a self) -> FFIStr<'a>;
+	/// Convenience function for converting from &str to FFIString
+	fn to_ffi_string(&self) -> FFIString;
+}
+
+impl StrToFFI for str {
+	fn to_ffi_str<'a>(&'a self) -> FFIStr<'a> {
+		FFIStr::new(self)
+	}
+	fn to_ffi_string(&self) -> FFIString {
+		FFIString::new(self)
+	}
+}
+
 
 
 /// FFI version of String
@@ -168,5 +185,22 @@ impl Into<String> for FFIString {
 impl Clone for FFIString {
 	fn clone(&self) -> Self {
 		Self::new(self.to_string())
+	}
+}
+
+/// Adds `to_ffi_string()` and `into_ffi_string()` to String
+pub trait StringToFFI {
+	/// Convenience function for converting from &String to FFIString
+	fn to_ffi_string(&self) -> FFIString;
+	/// Convenience function for converting from String to FFIString
+	fn into_ffi_string(self) -> FFIString;
+}
+
+impl StringToFFI for String {
+	fn to_ffi_string(&self) -> FFIString {
+		FFIString::new(self) // Into<String> for &String does create copied data
+	}
+	fn into_ffi_string(self) -> FFIString {
+		FFIString::new(self) // Into<String> for String does not create copied data
 	}
 }
