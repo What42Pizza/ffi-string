@@ -1,3 +1,11 @@
+## 1.0.3
+24/12/28
+
+- Improved documentation
+- Removed `to_ffi_string()` from `StringToFFI` because it is already available with String's `Deref<Target = str>`
+
+<br>
+
 ## 1.0.2
 24/12/20
 

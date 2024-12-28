@@ -16,6 +16,19 @@ use std::{fmt::{self, Display, Formatter}, ops::Deref};
 
 
 /// FFI version of &str
+/// 
+/// <br>
+/// 
+/// Features:
+/// - `fn new(&str) -> Self`
+/// - `fn as_str(&self) -> &str`
+/// - `impl Deref<Target = str>`
+/// - `impl Copy, Clone`
+/// - `impl Display, Debug`
+/// - `impl From<&str>, AsRef<str>`
+/// - `impl Into<String>`
+/// 
+/// <br>
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct FFIStr<'a> {
@@ -82,9 +95,9 @@ impl Into<String> for FFIStr<'_> {
 
 /// Adds `to_ffi_str()` and `to_ffi_string()` to &str
 pub trait StrToFFI {
-	/// Convenience function for converting from &'a str to FFIStr<'a>
+	/// Convenience function for converting from &'a str to FFIStr<'a>, copying only pointers
 	fn to_ffi_str<'a>(&'a self) -> FFIStr<'a>;
-	/// Convenience function for converting from &str to FFIString
+	/// Convenience function for converting from &str to FFIString, copying underlying data
 	fn to_ffi_string(&self) -> FFIString;
 }
 
@@ -100,6 +113,20 @@ impl StrToFFI for str {
 
 
 /// FFI version of String
+/// 
+/// <br>
+/// 
+/// Features:
+/// - `fn new(&str) -> Self`
+/// - `fn as_str(&self) -> &str`
+/// - `impl Deref<Target = str>`
+/// - `impl Clone`
+/// - `impl Display, Debug`
+/// - `impl From<String>, Into<String>`
+/// - `impl AsRef<str>`
+/// - Correctly drops underlying data
+/// 
+/// <br>
 #[repr(C)]
 pub struct FFIString {
 	ptr: *mut u8,
@@ -188,19 +215,16 @@ impl Clone for FFIString {
 	}
 }
 
-/// Adds `to_ffi_string()` and `into_ffi_string()` to String
+/// Adds `into_ffi_string()` to String
+/// 
+/// This does not add `to_ffi_str()` or `to_ffi_string()` because those are already available with String's `Deref<Target = str>`
 pub trait StringToFFI {
-	/// Convenience function for converting from &String to FFIString
-	fn to_ffi_string(&self) -> FFIString;
-	/// Convenience function for converting from String to FFIString
+	/// Convenience function for converting from String to FFIString, copying only pointers
 	fn into_ffi_string(self) -> FFIString;
 }
 
 impl StringToFFI for String {
-	fn to_ffi_string(&self) -> FFIString {
-		FFIString::new(self) // Into<String> for &String does create copied data
-	}
 	fn into_ffi_string(self) -> FFIString {
-		FFIString::new(self) // Into<String> for String does not create copied data
+		FFIString::new(self)
 	}
 }
